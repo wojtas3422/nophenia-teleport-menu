@@ -65,8 +65,6 @@ var in_game_names = {
 	"ash": "red_ash"
 }
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	ModLoaderLog.info("Init ui", self.name)
 	add_to_group("teleport")
