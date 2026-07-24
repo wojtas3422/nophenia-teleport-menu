@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://netqpkklfbps"]
+
+[node name="teleport_ui" type="Node2D" unique_id=1691355215]
+
+[node name="control" type="Control" parent="." unique_id=128680617]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 255.99997
+offset_bottom = 397.0
+
+[node name="color_rect" type="ColorRect" parent="control" unique_id=1674589781]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.40392157)
+
+[node name="margin_container" type="MarginContainer" parent="control" unique_id=595217115]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="v_box_container" type="VBoxContainer" parent="control/margin_container" unique_id=305728179]
+layout_mode = 2
+
+[node name="label" type="Label" parent="control/margin_container/v_box_container" unique_id=632092207]
+layout_mode = 2
+text = "Teleport Menu (F1 to toggle)"
+
+[node name="label2" type="Label" parent="control/margin_container/v_box_container" unique_id=1821320341]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7921569)
+theme_override_font_sizes/font_size = 15
+text = "Tab to switch focus to list
+Enter to use entry at top"
+
+[node name="line_edit" type="LineEdit" parent="control/margin_container/v_box_container" unique_id=1538796099]
+layout_mode = 2
+placeholder_text = "Search locations..."
+
+[node name="scroll_container" type="ScrollContainer" parent="control/margin_container/v_box_container" unique_id=316866410]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="stages_container" type="VBoxContainer" parent="control/margin_container/v_box_container/scroll_container" unique_id=851962178]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
