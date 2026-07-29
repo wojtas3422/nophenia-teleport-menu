@@ -46,6 +46,12 @@ theme_override_font_sizes/font_size = 15
 text = "Tab to switch focus to list
 Enter to use entry at top"
 
+[node name="check_box" type="CheckBox" parent="control/margin_container/v_box_container" unique_id=385512193]
+layout_mode = 2
+tooltip_text = "Skips the splash and title screen and teleports you to your last location instantly.
+Applies on next restart."
+text = "Skip title screen?"
+
 [node name="line_edit" type="LineEdit" parent="control/margin_container/v_box_container" unique_id=1538796099]
 layout_mode = 2
 placeholder_text = "Search locations..."
