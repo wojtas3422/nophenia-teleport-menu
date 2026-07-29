@@ -87,7 +87,6 @@ func _ready() -> void:
 	check_button.button_pressed = tp_cfg.instant_tp
 	_skip_title_screen()
 
-@warning_ignore("unused_parameter")
 func _stage_to_first_result(new_text):
 	var stages_list = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("stages_container").get_children()
 	var first_location = null
@@ -98,24 +97,21 @@ func _stage_to_first_result(new_text):
 	if first_location == null:
 		return
 	_toggle_menu()
-	game.change_stage(first_location.get_basename())
+	_change_stage_sync(first_location.get_basename())
 	var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 	search_bar.text = ""
 	_search_stages("")
 
-@warning_ignore("shadowed_global_identifier")
 func _add_stage_button(stage, container):
 	var button = Button.new()
 	button.button_down.connect( func():
-		game.to_entrance = 03
 		_toggle_menu()
-		game.change_stage(stage.get_basename())
+		_change_stage_sync(stage.get_basename())
 		var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 		search_bar.text = ""
 		_search_stages("")
 	)
 	var current_button_text = stage.get_file().replace("stage_", "").replace(".tscn", "")
-	@warning_ignore("shadowed_variable_base_class")
 	for name in in_game_names.keys():
 		if current_button_text == name:
 			current_button_text = in_game_names[name]
@@ -194,4 +190,10 @@ func _load_config() -> void:
 
 func _skip_title_screen():
 	if tp_cfg.instant_tp:
-		game.change_stage(config.last_visited)
+		_change_stage_sync(config.last_visited)
+
+func _change_stage_sync(destination):
+	if ModLoaderMod.is_mod_loaded("com-multiplayer"):
+		var mp = get_tree().get_first_node_in_group("mp")
+		mp.network_client.request_sync()
+	game.change_stage(destination)
