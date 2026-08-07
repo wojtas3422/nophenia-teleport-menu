@@ -35,11 +35,11 @@ theme_override_constants/margin_bottom = 8
 [node name="v_box_container" type="VBoxContainer" parent="control/margin_container" unique_id=305728179]
 layout_mode = 2
 
-[node name="label" type="Label" parent="control/margin_container/v_box_container" unique_id=632092207]
+[node name="menu_title" type="Label" parent="control/margin_container/v_box_container" unique_id=632092207]
 layout_mode = 2
 text = "Teleport Menu (F1 to toggle)"
 
-[node name="label2" type="Label" parent="control/margin_container/v_box_container" unique_id=1821320341]
+[node name="menu_tip" type="Label" parent="control/margin_container/v_box_container" unique_id=1821320341]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.7921569)
 theme_override_font_sizes/font_size = 15

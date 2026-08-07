@@ -65,8 +65,20 @@ var in_game_names = {
 	"ash": "red_ash"
 }
 
+var tp_cfg_res := load(get_script().resource_path.get_base_dir() + "/tp_cfg.gd")
+var tp_cfg = tp_cfg_res.new()
 
-# Called when the node enters the scene tree for the first time.
+func _input(event):
+	var visible = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").visible
+	if event is InputEventKey and event.pressed and !event.echo:
+		match event.physical_keycode:
+			tp_cfg.keybind:
+				_toggle_menu()
+			4194305:
+				if visible:
+					_toggle_menu()
+					get_viewport().set_input_as_handled()
+
 func _ready() -> void:
 	add_to_group("teleport")
 	var ui_scene_path = get_script().resource_path.get_base_dir() + "/resources/TeleportUi.tscn"
@@ -84,8 +96,9 @@ func _ready() -> void:
 	var check_button = teleport_ui.find_child("check_box")
 	check_button.connect("toggled", _toggle_title)
 	_load_config()
+	teleport_ui.find_child("menu_title").text = "Teleport Menu (%s to toggle)" % OS.get_keycode_string(tp_cfg.keybind)
 	check_button.button_pressed = tp_cfg.instant_tp
-	_skip_title_screen()
+	if tp_cfg.instant_tp: game.change_stage(config.last_visited)
 
 func _stage_to_first_result(new_text):
 	var stages_list = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("stages_container").get_children()
@@ -97,7 +110,7 @@ func _stage_to_first_result(new_text):
 	if first_location == null:
 		return
 	_toggle_menu()
-	_change_stage_sync(first_location.get_basename())
+	_change_stage(first_location.get_basename())
 	var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 	search_bar.text = ""
 	_search_stages("")
@@ -106,7 +119,7 @@ func _add_stage_button(stage, container):
 	var button = Button.new()
 	button.button_down.connect( func():
 		_toggle_menu()
-		_change_stage_sync(stage.get_basename())
+		_change_stage(stage.get_basename())
 		var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 		search_bar.text = ""
 		_search_stages("")
@@ -130,18 +143,8 @@ func _search_stages(current_query):
 		else:
 			_stage.visible = true
 
-func _input(event):
-	var visible = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").visible
-	if event is InputEventKey and event.pressed and !event.echo:
-		match event.keycode:
-			KEY_F1:
-				_toggle_menu()
-			KEY_ESCAPE:
-				if visible:
-					_toggle_menu()
-					get_viewport().set_input_as_handled()
-
 func _toggle_menu():
+	if game.transing: return
 	var teleport_ui = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui")
 	var teleport_ui_search_box = teleport_ui.find_child("line_edit")
 	if teleport_ui.visible:
@@ -165,14 +168,11 @@ func _set_player_input_enabled(enabled: bool) -> void:
 			if anim_tree:
 				anim_tree.set("parameters/idle_walk_run/blend_position", Vector2.ZERO)
 
-const _SETTINGS_PATH := "user://tp.cfg"
-
-var tp_cfg_res := load(get_script().resource_path.get_base_dir() + "/tp_cfg.gd")
-var tp_cfg = tp_cfg_res.new()
-
 func _toggle_title(current_value):
 	tp_cfg.instant_tp = current_value
 	save_config()
+	
+const _SETTINGS_PATH := "user://tp.cfg"
 
 func save_config() -> void:
 	var cfg := ConfigFile.new()
@@ -188,12 +188,7 @@ func _load_config() -> void:
 		if cfg.has_section_key("settings", _prop.name):
 			tp_cfg.set(_prop.name, cfg.get_value("settings", _prop.name))
 
-func _skip_title_screen():
-	if tp_cfg.instant_tp:
-		_change_stage_sync(config.last_visited)
-
-func _change_stage_sync(destination):
-	if ModLoaderMod.is_mod_loaded("com-multiplayer"):
-		var mp = get_tree().get_first_node_in_group("mp")
-		mp.network_client.request_sync()
+func _change_stage(destination):
+	if game.transing: return
 	game.change_stage(destination)
+	get_tree().unload_current_scene()
