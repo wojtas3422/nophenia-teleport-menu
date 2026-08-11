@@ -1,5 +1,5 @@
 # nophenia-teleport-menu
-A simple teleport menu for the [nophenia](nophenia.net) game that allows you to traverse between stages easily!
+A simple teleport menu for the [nophenia](https://nophenia.net) game that allows you to traverse between stages easily!
 
 ## Installation
 1. Mod your game (easiest way is by installing the [multiplayer mod](https://github.com/BdEgh/nophenia-mp#installing))
