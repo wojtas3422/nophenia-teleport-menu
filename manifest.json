@@ -15,12 +15,14 @@
 			"image": null,
 			"incompatibilities": [],
 			"load_before": [],
-			"optional_dependencies": [],
+			"optional_dependencies": [
+				"wojtasa-stageLoader"
+			],
 			"tags": []
 		}
 	},
 	"name": "TeleportMenu",
 	"namespace": "wojtasa",
-	"version_number": "0.0.2",
+	"version_number": "0.0.3",
 	"website_url": ""
 }

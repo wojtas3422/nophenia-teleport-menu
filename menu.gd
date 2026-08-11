@@ -65,6 +65,8 @@ var in_game_names = {
 	"ash": "red_ash"
 }
 
+const _SETTINGS_PATH := "user://tp.cfg"
+
 var tp_cfg_res := load(get_script().resource_path.get_base_dir() + "/tp_cfg.gd")
 var tp_cfg = tp_cfg_res.new()
 
@@ -92,7 +94,14 @@ func _ready() -> void:
 	search_bar.text_submitted.connect(_stage_to_first_result)
 	for _stage in stages:
 		if _stage.get_extension() != "tscn": continue
-		_add_stage_button(_stage, stages_container)
+		_add_stage_button(_stage.get_file(), stages_container)
+	if ModLoaderMod.is_mod_loaded("wojtasa-stageLoader"):
+		for _folder in ResourceLoader.list_directory("res://stages-unpacked"):
+			if _folder.ends_with("/"):
+				for _file in ResourceLoader.list_directory("res://stages-unpacked/" + _folder):
+					if _file.get_extension() == "tscn":
+						var _custom_stage = "res://stages-unpacked/" + _folder + _file
+						_add_stage_button(_custom_stage, stages_container)
 	var check_button = teleport_ui.find_child("check_box")
 	check_button.connect("toggled", _toggle_title)
 	_load_config()
@@ -100,7 +109,7 @@ func _ready() -> void:
 	check_button.button_pressed = tp_cfg.instant_tp
 	if tp_cfg.instant_tp: game.change_stage(config.last_visited)
 
-func _stage_to_first_result(new_text):
+func _stage_to_first_result():
 	var stages_list = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("stages_container").get_children()
 	var first_location = null
 	for _stage in stages_list:
@@ -110,7 +119,7 @@ func _stage_to_first_result(new_text):
 	if first_location == null:
 		return
 	_toggle_menu()
-	_change_stage(first_location.get_basename())
+	_change_stage(first_location)
 	var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 	search_bar.text = ""
 	_search_stages("")
@@ -119,7 +128,7 @@ func _add_stage_button(stage, container):
 	var button = Button.new()
 	button.button_down.connect( func():
 		_toggle_menu()
-		_change_stage(stage.get_basename())
+		_change_stage(stage)
 		var search_bar = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("line_edit")
 		search_bar.text = ""
 		_search_stages("")
@@ -171,8 +180,6 @@ func _set_player_input_enabled(enabled: bool) -> void:
 func _toggle_title(current_value):
 	tp_cfg.instant_tp = current_value
 	save_config()
-	
-const _SETTINGS_PATH := "user://tp.cfg"
 
 func save_config() -> void:
 	var cfg := ConfigFile.new()
@@ -188,7 +195,23 @@ func _load_config() -> void:
 		if cfg.has_section_key("settings", _prop.name):
 			tp_cfg.set(_prop.name, cfg.get_value("settings", _prop.name))
 
-func _change_stage(destination):
+func _change_stage(_stage: String = ""):
+	var active_stage = get_tree().current_scene
 	if game.transing: return
-	game.change_stage(destination)
+	game.trans_id = randi_range(0, 7)
+
+	await game.trans(true)
+	await RenderingServer.frame_post_draw
+	if !ResourceLoader.exists(_stage) and !_stage.contains("stages-unpacked"): _stage = "res://stage/%s" % _stage
 	get_tree().unload_current_scene()
+	print(_stage)
+	var _error = get_tree().change_scene_to_file(_stage)
+	if _error: _change_stage("stage_title.tscn")
+	await get_tree().tree_changed
+	await get_tree().process_frame
+	game.trans(false)
+	game.show_location()
+
+	if is_instance_valid(active_stage):
+		if !active_stage.is_static:
+			audio.play_snd(preload("res://audio/sfx/door_shut.ogg"), -1.0, 0.2)
