@@ -109,7 +109,7 @@ func _ready() -> void:
 	check_button.button_pressed = tp_cfg.instant_tp
 	if tp_cfg.instant_tp: game.change_stage(config.last_visited)
 
-func _stage_to_first_result():
+func _stage_to_first_result(new_text):
 	var stages_list = get_tree().get_first_node_in_group("teleport").get_node("teleport_ui").find_child("stages_container").get_children()
 	var first_location = null
 	for _stage in stages_list:
@@ -211,7 +211,5 @@ func _change_stage(_stage: String = ""):
 	await get_tree().process_frame
 	game.trans(false)
 	game.show_location()
-
-	if is_instance_valid(active_stage):
-		if !active_stage.is_static:
-			audio.play_snd(preload("res://audio/sfx/door_shut.ogg"), -1.0, 0.2)
+	
+	audio.play_snd(preload("res://audio/sfx/door_shut.ogg"), -1.0, 0.2)
