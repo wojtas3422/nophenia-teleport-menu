@@ -1,7 +1,11 @@
 # nophenia-teleport-menu
 A simple teleport menu for the [nophenia](https://nophenia.net) game that allows you to traverse between stages easily!
 
-## Installation
+# Installation
+## Mod manager (recommended)
+Download the [nophenia mod manager and install the mod from there](https://github.com/wojtas3422/nophenia-mod-manager)
+
+## Manual
 1. Mod your game (easiest way is by installing the [multiplayer mod](https://github.com/BdEgh/nophenia-mp#installing))
 2. Download the latest zip from the [releases page](https://github.com/wojtas3422/nophenia-teleport-menu/releases)
 3. Drop the zip inside the ``mods`` folder at your modded games directory
