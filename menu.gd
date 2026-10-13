@@ -1,5 +1,4 @@
 extends Node
-
 var stages = [
 	"apartment_balcony.tscn",
 	"stage_apartment.tscn",
@@ -38,7 +37,8 @@ var stages = [
 	"stage_vision.tscn",
 	"stage_warehouse.tscn",
 	"stage_waterpark.tscn",
-	"upwards_metro.tscn"
+	"upwards_metro.tscn",
+	"stage_snowy_street_after.tscn"
 ]
 
 var in_game_names = {
@@ -62,7 +62,8 @@ var in_game_names = {
 	"homeside": "apartment",
 	"swing": "rose_swing",
 	"spider_lily": "spider_lilies",
-	"ash": "red_ash"
+	"ash": "red_ash",
+	"snowy_street_after": "forgotten_residence"
 }
 
 const _SETTINGS_PATH := "user://tp.cfg"
